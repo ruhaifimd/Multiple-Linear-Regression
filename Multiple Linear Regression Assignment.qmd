@@ -17,11 +17,13 @@ editor: visual
 
 5\) Noor Nazli bt Din (22306061)
 
----
+------------------------------------------------------------------------
 
 ## **Workflow**
 
 -   Introduction
+
+-   Research question
 
 -   Methodology
 
@@ -35,17 +37,23 @@ editor: visual
 
 -   Interpretation
 
----
+------------------------------------------------------------------------
 
 ## **Introduction**
 
 This was data from **US Health Insurance Dataset** comprise
 
+------------------------------------------------------------------------
+
+## Research question
+
+How are age, BMI, number of children, sex, and smoking status associated with health insurance costs (charges) in USD?
+
 ---
 
 ## **Methodology**
 
----
+------------------------------------------------------------------------
 
 ## **Data Exploration**
 
@@ -61,24 +69,60 @@ library(ggplot2)
 library(broom)
 ```
 
-## **Read data**
+### **Load and inspect the data**
 
 ```{r}
+# Load the dataset
 library(readr)
 insurance <- read_csv("insurance.csv")
-glimpse(insurance)
+
+# Inspect the data
+str(insurance)
+summary(insurance)
+head(insurance)
+
+# Check for missing values
+sum(is.na(insurance))
 ```
 
----
+------------------------------------------------------------------------
 
-## Describe data
+### Data preparation
 
-### **Convert “character” into “factor” variable**
+Convert categorical variables (`sex` and `smoker`) to factors:
 
 ```{r}
-insurance <- 
-insurance %>%
-  mutate(across(where(is.character), as_factor))
+insurance$sex <- as.factor(insurance$sex)
+insurance$smoker <- as.factor(insurance$smoker)
+```
+
+Check if levels are correct:
+
+```{r}
+levels(insurance$sex)
+levels(insurance$smoker)
+```
+
+### Exploratory data analysis (EDA)
+
+Visualise relationships:
+
+```{r}
+pairs(insurance[, c("age", "bmi", "children", "charges")])
+```
+
+Correlation between continuous variables:
+
+```{r}
+cor(insurance[, c("age", "bmi", "children", "charges")])
+```
+
+Boxplots for categorical variables:
+
+```{r}
+ggplot(insurance, aes(x = smoker, y = charges, fill = smoker)) +
+  geom_boxplot() +
+  labs(title = "Health Insurance Cost by Smoking Status", y = "Charges (USD)")
 ```
 
 ## **Data Summary**
@@ -96,7 +140,7 @@ insurance %>%
 italicize_levels()
 ```
 
----
+------------------------------------------------------------------------
 
 ## **Explore Data**
 
@@ -130,7 +174,7 @@ For **continuous data**: We employ histograms to gain insight into the distribu
       geom_histogram()
     ```
 
----
+------------------------------------------------------------------------
 
 For **categorical data**: Bar plots are utilized to visualize the frequency of each category. This provides a clear representation of the prominence of each category within the respective feature.
 
@@ -148,7 +192,7 @@ For **categorical data**: Bar plots are utilized to visualize the frequency of 
       geom_bar()
     ```
 
----
+------------------------------------------------------------------------
 
 ## Perform Linear Regression
 
@@ -264,7 +308,7 @@ tbl_regression(MLR_modelB) %>%  add_glance_table(include = c(adj.r.squared)) %>%
                  subtitle = "With Interaction")
 ```
 
----
+------------------------------------------------------------------------
 
 ## **Model Selection**
 
@@ -276,7 +320,7 @@ anova(MLR_modelA,MLR_modelB)
 
 Since p-value is 0.1317, the interaction term does not significantly improve the model, thus simpler model (MLR_modelA) is chosen for ease of interpretation.
 
----
+------------------------------------------------------------------------
 
 ## **Model Assessment**
 
