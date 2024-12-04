@@ -135,11 +135,21 @@ no obvious correlation issue between continuous variables
 
 **Boxplots for categorical variables:**
 
+1.  smoking status
+
 ```{r}
 ggplot(insurance, aes(x = smoker, y = charges, fill = smoker)) +
   geom_boxplot() +
   labs(title = "Health Insurance Cost by Smoking Status", y = "Charges (USD)")
 ```
+
+2.  gender
+
+    ```{r}
+    ggplot(insurance, aes(x = sex, y = charges, fill = sex)) +
+      geom_boxplot() +
+      labs(title = "Health Insurance Cost by Gender", y = "Charges (USD)")
+    ```
 
 ### **Data Summary**
 
@@ -284,6 +294,8 @@ SLR_table
 
 ### Multiple Linear Regression without Interaction (Model A)
 
+Model A includes all covariates—age, sex, number of children, BMI, and smoking status—as predictors to examine their association with the outcome variable, health insurance charges. This approach aims to evaluate the contribution of each factor while controlling for the others in explaining variations in insurance costs.
+
 ```{r}
 MLR_modelA <- lm(charges ~ age + sex + children + bmi + smoker,
                  data = insurance)
@@ -291,7 +303,7 @@ MLR_modelA <- lm(charges ~ age + sex + children + bmi + smoker,
 summary(MLR_modelA)
 ```
 
-Table Summary for Model A
+**Table Summary for Model A**
 
 ```{r}
 tbl_regression(MLR_modelA) %>%  add_glance_table(include = c(adj.r.squared)) %>% 
@@ -303,6 +315,8 @@ tbl_regression(MLR_modelA) %>%  add_glance_table(include = c(adj.r.squared)) %>%
 
 ### Multiple Linear Regression with Interaction (Model B)
 
+Model B is a multiple linear regression (MLR) model that includes an interaction term between age and smoking status. This decision is based on the premise that both variables—age and smoking status—have the potential to modify their combined effect on the outcome variable, health insurance charges
+
 ```{r}
 MLR_modelB <- lm(charges ~ age + sex + children + bmi + smoker + age:smoker,
                  data = insurance)
@@ -310,7 +324,7 @@ MLR_modelB <- lm(charges ~ age + sex + children + bmi + smoker + age:smoker,
 summary(MLR_modelB)
 ```
 
-Table Summary for Model B
+**Table Summary for Model B**
 
 ```{r}
 tbl_regression(MLR_modelB) %>%  add_glance_table(include = c(adj.r.squared)) %>% 
@@ -324,7 +338,23 @@ tbl_regression(MLR_modelB) %>%  add_glance_table(include = c(adj.r.squared)) %>%
 
 ## **Model Selection**
 
-Model comparison using anova
+-   Compare model fit:
+
+1.  Adjusted R^2^
+
+    ```{r}
+    summary(MLR_modelA)$adj.r.squared
+    summary(MLR_modelB)$adj.r.squared
+    ```
+
+2.  Akaike Information Criterion (AIC)
+
+    ```{r}
+    AIC(MLR_modelA)
+    AIC(MLR_modelB)
+    ```
+
+-   Perform an Analysis of Variance (ANOVA) to formally test whether adding the interaction term significantly improves the model.
 
 ```{r}
 anova(MLR_modelA,MLR_modelB)
@@ -334,7 +364,7 @@ Since p-value is 0.1317, the interaction term does not significantly improve the
 
 ------------------------------------------------------------------------
 
-## **Model Assessment**
+## **Model Diagnostic and Assumption Checking**
 
 We took Model A (MLR model without interaction) as our preliminary model
 
@@ -343,39 +373,39 @@ prelim.final.m <- lm (charges ~ age + sex + children + bmi + smoker,
                       data = insurance)
 ```
 
-a\. Diagnostics plots
+**a. Diagnostics plots for residual analysis**
 
-Plot 1
+**Plot 1 (Linearity)**
 
 ```{r}
 plot(prelim.final.m,which=1)
 ```
 
-Comment:
+Comment: random scatter of points, thus linearity assumption is likely meet.
 
-Plot 2
+**Plot 2 (normality of residuals)**
 
 ```{r}
 plot(prelim.final.m,which=2)
 ```
 
-Comment:
+Comment: The Q-Q plot indicates that the majority of the data points closely follow the diagonal line, suggesting that the residuals are approximately normally distributed. However, a small number of observations (specifically observations 243, 578, and 1301) exhibit large residuals, which may suggest potential outliers or influential data points.
 
-Plot 3
+**Plot 3 (Homoscedasticity)**
 
 ```{r}
 plot(prelim.final.m,which=3)
 ```
 
-Comment:
+Comment: residuals appear to be equally spread (random scatter) across all levels of the fitted values. thus homoscedasticity is likely valid.
 
-Plot 4
+Plot 4 (Influential)
 
 ```{r}
 plot(prelim.final.m,which=5)
 ```
 
-Comment:
+Comment: Observations 544, 578, and 1301 are identified as potential outliers in the Residual vs Leverage plot. However, these points do not exceed the Cook's distance threshold, indicating that they are not influential cases that would significantly impact the regression model's result.
 
 b\. Plot residuals against numerical independent variables (eg : age, number of children, and BMI) in the model to check for individual linearity.
 
