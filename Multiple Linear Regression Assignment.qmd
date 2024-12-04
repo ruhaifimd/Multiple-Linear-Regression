@@ -362,7 +362,7 @@ tbl_regression(MLR_modelB) %>%  add_glance_table(include = c(adj.r.squared)) %>%
 anova(MLR_modelA,MLR_modelB)
 ```
 
-Since p-value is 0.1317, the interaction term does not significantly improve the model, thus simpler model (MLR_modelA) is chosen for ease of interpretation.
+Both the adjusted R^2^ and AIC values for the models were comparable, indicating similar overall model performance. For the ANOVA comparison, the p-value of 0.1317 suggests that the interaction term does not significantly improve the model. Consequently, the simpler model (MLR_modelA) was selected for its interpretability and practicality in explaining the relationship between covariates and the outcome.
 
 ------------------------------------------------------------------------
 
@@ -401,7 +401,7 @@ plot(prelim.final.m,which=3)
 
 Comment: residuals appear to be equally spread (random scatter) across all levels of the fitted values. thus homoscedasticity is likely valid.
 
-Plot 4 (Influential)
+**Plot 4 (Influential)**
 
 ```{r}
 plot(prelim.final.m,which=5)
@@ -439,3 +439,176 @@ augment(prelim.final.m) %>%
     ```
 
 Comment: Residuals shows individual linearity against age, children and bmi
+
+------------------------------------------------------------------------
+
+## **Final Model Checking**
+
+### **Fitted values and residuals**
+
+We produce diagnostic values to look for outliers or any influential observations within the model
+
+```{r}
+#extract residual value from model
+res.model <- residuals(prelim.final.m)
+head(res.model)
+
+# Plot histogram of residuals
+hist(res.model, 
+     main = "Histogram of Residuals", 
+     xlab = "Residuals", 
+     col = "lightblue", 
+     border = "black", 
+     breaks = 20, 
+     freq = FALSE)  # Set freq = FALSE to plot density instead of counts
+
+# Add normal distribution curve
+x <- seq(min(res.model), max(res.model), length = 100)  # Generate sequence of x values
+y <- dnorm(x, mean = mean(res.model), sd = sd(res.model))  # Compute normal density
+lines(x, y, col = "red", lwd = 2)  # Add normal distribution line
+
+```
+
+Comment: residual appear normally distributed
+
+-   Generate residual values:
+
+```{r}
+library(DT)
+insurance.pred.res <- augment(prelim.final.m)
+insurance.pred.res %>% datatable()
+```
+
+### **Influential Observations**
+
+Keep standardized residuals between 2 and -2 (values above 2 or lower than −2 considered as influential observations
+
+```{r}
+new_insurance <- 
+  insurance.pred.res %>% 
+  filter(.std.resid < 2 & .std.resid > -2 )
+```
+
+Re-run the model with the non-influential observations, make it as our final model
+
+```{r}
+final_model <- lm(charges ~ age + sex + children + smoker + bmi,
+                  data = new_insurance)
+
+summary(final_model)
+```
+
+### **Model diagnostics and assumption checking for final model**
+
+1.  Diagnostic plots
+
+**Plot 1 (Linearity)**
+
+```{r}
+plot(final_model, which = 1)
+```
+
+**Plot 2 (normality of residuals)**
+
+```{r}
+plot(final_model, which = 2)
+```
+
+**Plot 3 (Homoscedasticity)**
+
+```{r}
+plot(final_model, which = 3)
+```
+
+**Plot 4 (Influential)**
+
+```{r}
+plot(final_model, which = 5)
+```
+
+2.  Plot residuals against numerical independent variables (eg : age, children and BMI) in the model to check for individual linearity.
+    -   Residual vs age
+
+        ```{r}
+        augment(final_model) %>%
+          ggplot(aes(x = age, y = .resid))+
+          geom_point()+
+          geom_smooth()
+        ```
+
+    -   Residual vs children
+
+        ```{r}
+        augment(final_model) %>%
+          ggplot(aes(x = children, y = .resid))+
+          geom_point()+
+          geom_smooth()
+        ```
+
+    -   Residual vs BMI
+
+        ```{r}
+        augment(final_model) %>%
+          ggplot(aes(x = bmi, y = .resid))+
+          geom_point()+
+          geom_smooth()
+        ```
+
+Comment: residual for final model shows individual linearity against age, children and bmi.
+
+3.  Histogram of residual of final model
+
+    ```{r}
+    #extract residual value from model
+    res.final_model <- residuals(final_model)
+    head(res.final_model)
+
+    # Plot histogram of residuals
+    hist(res.final_model, 
+         main = "Histogram of Residuals", 
+         xlab = "Residuals", 
+         col = "lightblue", 
+         border = "black", 
+         breaks = 20, 
+         freq = FALSE)  # Set freq = FALSE to plot density instead of counts
+
+    # Add normal distribution curve
+    x <- seq(min(res.final_model), max(res.final_model), length = 100)  # Generate sequence of x values
+    y <- dnorm(x, mean = mean(res.final_model), sd = sd(res.final_model))  # Compute normal density
+    lines(x, y, col = "red", lwd = 2)  # Add normal distribution line
+    ```
+
+Comment: Residual of final model appear normally distributed
+
+------------------------------------------------------------------------
+
+### **Final table for multiple linear regression**
+
+```{r}
+library(gt)
+library(gtsummary)
+
+# Create regression table with additional metrics and formatting
+tbl_regression(final_model) %>%
+  add_glance_table(include = c("adj.r.squared")) %>%  # Add Adjusted R-squared from glance
+  bold_labels() %>%  # Bold regression labels
+  italicize_levels() %>%  # Italicize factor levels
+  bold_p( # Bold p-values
+  ) %>%
+  as_gt() %>%  # Convert to gt table
+  gt::tab_header(
+    title = "Multiple Linear Regression Model",  # Main title
+    subtitle = "Without Interaction"  # Subtitle
+  )
+
+```
+
+------------------------------------------------------------------------
+
+## **Interpretation**
+
+Model Equation:
+
+```{r}
+
+```
