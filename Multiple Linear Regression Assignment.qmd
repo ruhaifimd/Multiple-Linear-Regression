@@ -437,3 +437,5 @@ augment(prelim.final.m) %>%
       geom_point()+
       geom_smooth()
     ```
+
+Comment: Residuals shows individual linearity against age, children and bmi
