@@ -41,7 +41,14 @@ editor: visual
 
 ## **Introduction**
 
-This was data from **US Health Insurance Dataset** comprise
+This was data from **US Health Insurance Dataset** comprise medical information and costs billed by health insurance companies. it contains six variables with 1338 observations:
+
+1.  age: age of patient (continous)
+2.  sex: gender of the subjects (categorical : male, female)
+3.  bmi: BMI of subject (continuous)
+4.  children: Number of children covered by health insurance (continous)
+5.  smoker: smoking status of subject (categorical: no, yes)
+6.  charges: individual medical costs billed by health insurance
 
 ------------------------------------------------------------------------
 
@@ -49,9 +56,11 @@ This was data from **US Health Insurance Dataset** comprise
 
 How are age, BMI, number of children, sex, and smoking status associated with health insurance costs (charges) in USD?
 
----
+------------------------------------------------------------------------
 
 ## **Methodology**
+
+We will use multiple linear regression model approach to analyse predictors to explain variation of health insurance cost in sample population. 1st model will consist of all independent variables (age, sex, BMI, children, and smoking status) and another model will be constructed by adding interaction term between age and smoking status as effect of age towards health insurance cost can be modified by individual’s smoking status. Model comparison will be executed using anova test to select the final model. Model assessment will be conducted by running the diagnostic plot and checking the model for any influential observation before final model is concluded.
 
 ------------------------------------------------------------------------
 
