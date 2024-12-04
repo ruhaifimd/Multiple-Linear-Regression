@@ -610,5 +610,7 @@ tbl_regression(final_model) %>%
 Model Equation:
 
 ```{r}
+library(equatiomatic)
+extract_eq(final_model)
 
 ```
