@@ -33,7 +33,9 @@ execute:
 
 -   Perform Linear Regression Model
 
--   Model Assessment
+-   Model Selection
+
+-   Model Diagnostic and Assumption Checking
 
 -   Final Model Checking
 
