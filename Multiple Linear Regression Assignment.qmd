@@ -3,6 +3,8 @@ title: "Assignment Multiple Linear Regression"
 author: "Group 1"
 format: html
 editor: visual
+execute:
+      warning: false
 ---
 
 ## **Group members:**
@@ -43,16 +45,16 @@ editor: visual
 
 This was data from **US Health Insurance Dataset** comprise medical information and costs billed by health insurance companies. it contains six variables with 1338 observations:
 
-1.  age: age of patient (continous)
+1.  age: age of patient (continuous)
 2.  sex: gender of the subjects (categorical : male, female)
 3.  bmi: BMI of subject (continuous)
-4.  children: Number of children covered by health insurance (continous)
+4.  children: Number of children covered by health insurance (continuous)
 5.  smoker: smoking status of subject (categorical: no, yes)
-6.  charges: individual medical costs billed by health insurance
+6.  charges: individual medical costs billed by health insurance (continuous)
 
 ------------------------------------------------------------------------
 
-## Research question
+## **Research question**
 
 How are age, BMI, number of children, sex, and smoking status associated with health insurance costs (charges) in USD?
 
@@ -96,7 +98,7 @@ sum(is.na(insurance))
 
 ------------------------------------------------------------------------
 
-### Data preparation
+### **Data preparation**
 
 Convert categorical variables (`sex` and `smoker`) to factors:
 
@@ -114,19 +116,24 @@ levels(insurance$smoker)
 
 ### Exploratory data analysis (EDA)
 
-Visualise relationships:
+**Visualise relationships:**
 
 ```{r}
 pairs(insurance[, c("age", "bmi", "children", "charges")])
 ```
 
-Correlation between continuous variables:
+**Correlation between continuous variables:**
 
 ```{r}
-cor(insurance[, c("age", "bmi", "children", "charges")])
+cor_matrix <- cor(insurance[, c("age", "bmi", "children", "charges")])
+
+#visualize the correlation matrix
+corrplot(cor_matrix, method = "circle")
 ```
 
-Boxplots for categorical variables:
+no obvious correlation issue between continuous variables
+
+**Boxplots for categorical variables:**
 
 ```{r}
 ggplot(insurance, aes(x = smoker, y = charges, fill = smoker)) +
@@ -134,11 +141,7 @@ ggplot(insurance, aes(x = smoker, y = charges, fill = smoker)) +
   labs(title = "Health Insurance Cost by Smoking Status", y = "Charges (USD)")
 ```
 
-## **Data Summary**
-
-```{r}
-summary(insurance)
-```
+### **Data Summary**
 
 **Table Summary**
 
@@ -151,7 +154,7 @@ italicize_levels()
 
 ------------------------------------------------------------------------
 
-## **Explore Data**
+### **Data Visualization**
 
 For **continuous data**: We employ histograms to gain insight into the distribution of each feature. This allows us to understand the central tendency, spread, and shape of the dataset’s distribution.
 
@@ -203,9 +206,9 @@ For **categorical data**: Bar plots are utilized to visualize the frequency of 
 
 ------------------------------------------------------------------------
 
-## Perform Linear Regression
+## **Perform Linear Regression Model**
 
-### Univariable analysis
+### **Univariable analysis**
 
 1.  age
 
@@ -252,7 +255,7 @@ For **categorical data**: Bar plots are utilized to visualize the frequency of 
     summary(SLR_smoking)
     ```
 
-Table Summary
+**Table Summary for Simple Linear Regression**
 
 ```{r}
 #create a summary table for each model with confidence intervals
@@ -272,7 +275,7 @@ SLR_table <- tbl_stack(
 ) %>%
   as_gt() %>%
   gt::tab_header(
-    title = "Simple Logistic Regression Model"
+    title = "Simple Linear Regression Model"
   )
 
 #Print the summary table
@@ -294,7 +297,7 @@ Table Summary for Model A
 tbl_regression(MLR_modelA) %>%  add_glance_table(include = c(adj.r.squared)) %>% 
   bold_labels() %>% italicize_levels() %>% add_n() %>% 
   as_gt() %>%
-  gt::tab_header(title = "Multiple Linear Regression Mode A",
+  gt::tab_header(title = "Multiple Linear Regression Model A",
                  subtitle = "Without Interaction")
 ```
 
