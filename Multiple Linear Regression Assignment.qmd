@@ -616,3 +616,15 @@ library(equatiomatic)
 extract_eq(final_model, use_coefs = TRUE)
 
 ```
+
+-   The **Adjusted R² = 0.845**, indicating that approximately **84.5% of the variance in the health insurance charges (outcome variable)** is explained by the included predictors (age, sex, children, smoker, and BMI).
+
+-   Every additional year of age, health insurance charges are expected to increase by USD 255, holding all other variables constant. The narrow confidence interval and highly significant p-value suggest a robust and reliable relationship between age and insurance charges.
+
+-   Each additional child in the household is associated with an increase in health insurance charges of USD 392, holding other factors constant. The confidence interval is moderately narrow, and the relationship is statistically significant.
+
+-   Smoking status, with non-smokers as the reference group, has the largest effect on health insurance charges among all the predictors. This indicates that smokers, on average, incur USD 24,072 more in health insurance charges compared to non-smokers, holding other variables constant. The narrow confidence interval and highly significant p-value highlight the substantial and reliable impact of smoking on charges.
+
+-   Every one-unit increase in BMI, health insurance charges are expected to rise by USD 325, assuming all other factors remain constant. The confidence interval is relatively tight, and the relationship is statistically significant.
+
+-   No signifincat difference in charges between males and females.
