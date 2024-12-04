@@ -39,6 +39,8 @@ execute:
 
 -   Final Model Checking
 
+-   Final Table Presentation
+
 -   Interpretation
 
 ------------------------------------------------------------------------
@@ -582,7 +584,7 @@ Comment: Residual of final model appear normally distributed
 
 ------------------------------------------------------------------------
 
-### **Final table for multiple linear regression**
+## **Final table for multiple linear regression**
 
 ```{r}
 library(gt)
@@ -611,6 +613,6 @@ Model Equation:
 
 ```{r}
 library(equatiomatic)
-extract_eq(final_model)
+extract_eq(final_model, use_coefs = TRUE)
 
 ```
