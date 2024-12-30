@@ -627,4 +627,4 @@ extract_eq(final_model, use_coefs = TRUE)
 
 -   Every one-unit increase in BMI, health insurance charges are expected to rise by USD 325, assuming all other factors remain constant. The confidence interval is relatively tight, and the relationship is statistically significant.
 
--   No signifincat difference in charges between males and females.
+-   No significant difference in charges between males and females.
